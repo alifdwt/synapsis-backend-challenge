@@ -9,17 +9,30 @@ import (
 )
 
 type Querier interface {
+	CreateCartItem(ctx context.Context, arg CreateCartItemParams) (CartItem, error)
 	CreateCategory(ctx context.Context, arg CreateCategoryParams) (Category, error)
+	CreateOrder(ctx context.Context, arg CreateOrderParams) (Order, error)
+	CreateOrderItem(ctx context.Context, arg CreateOrderItemParams) (OrderItem, error)
 	CreateProduct(ctx context.Context, arg CreateProductParams) (Product, error)
+	CreateShoppingCart(ctx context.Context, userID string) (ShoppingCart, error)
 	CreateUser(ctx context.Context, arg CreateUserParams) (User, error)
+	DeleteCartItem(ctx context.Context, arg DeleteCartItemParams) error
 	DeleteCategory(ctx context.Context, id string) error
 	DeleteProduct(ctx context.Context, id string) error
+	DeleteShoppingCart(ctx context.Context, userID string) error
+	GetCartItem(ctx context.Context, id string) (CartItem, error)
+	GetCartItemsByUserID(ctx context.Context, cartID string) ([]CartItem, error)
 	GetCategory(ctx context.Context, id string) (CategoriesWithProduct, error)
+	GetOrder(ctx context.Context, id string) (Order, error)
 	GetProduct(ctx context.Context, id string) (GetProductRow, error)
+	GetShoppingCart(ctx context.Context, userID string) (ShoppingCart, error)
 	GetUser(ctx context.Context, username string) (User, error)
 	GetUserWithProducts(ctx context.Context, username string) (UsersWithProduct, error)
 	ListCategories(ctx context.Context, arg ListCategoriesParams) ([]CategoriesWithProduct, error)
+	ListOrderByUserId(ctx context.Context, userID string) ([]Order, error)
+	ListOrderItemsByOrderID(ctx context.Context, orderID string) ([]OrderItem, error)
 	ListProducts(ctx context.Context, arg ListProductsParams) ([]ListProductsRow, error)
+	UpdateCartItem(ctx context.Context, arg UpdateCartItemParams) (CartItem, error)
 	UpdateCategory(ctx context.Context, arg UpdateCategoryParams) (Category, error)
 	UpdateProduct(ctx context.Context, arg UpdateProductParams) (Product, error)
 }

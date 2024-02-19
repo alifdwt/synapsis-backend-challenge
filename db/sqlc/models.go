@@ -9,6 +9,13 @@ import (
 	"time"
 )
 
+type CartItem struct {
+	ID        string `json:"id"`
+	CartID    string `json:"cart_id"`
+	ProductID string `json:"product_id"`
+	Quantity  int64  `json:"quantity"`
+}
+
 type CategoriesWithProduct struct {
 	ID       string      `json:"id"`
 	Name     string      `json:"name"`
@@ -18,6 +25,22 @@ type CategoriesWithProduct struct {
 type Category struct {
 	ID   string `json:"id"`
 	Name string `json:"name"`
+}
+
+type Order struct {
+	ID            string    `json:"id"`
+	UserID        string    `json:"user_id"`
+	PaymentMethod string    `json:"payment_method"`
+	TotalCost     int64     `json:"total_cost"`
+	OrderDate     time.Time `json:"order_date"`
+}
+
+type OrderItem struct {
+	ID              string `json:"id"`
+	OrderID         string `json:"order_id"`
+	ProductID       string `json:"product_id"`
+	Quantity        int64  `json:"quantity"`
+	PriceAtPurchase int64  `json:"price_at_purchase"`
 }
 
 type Product struct {
@@ -31,15 +54,10 @@ type Product struct {
 	UpdatedAt   time.Time      `json:"updated_at"`
 }
 
-type Purchase struct {
-	ID         string    `json:"id"`
-	UserID     string    `json:"user_id"`
-	ProductID  string    `json:"product_id"`
-	Quantity   int64     `json:"quantity"`
-	TotalPrice int64     `json:"total_price"`
-	IsPaid     bool      `json:"is_paid"`
-	CreatedAt  time.Time `json:"created_at"`
-	UpdatedAt  time.Time `json:"updated_at"`
+type ShoppingCart struct {
+	ID        string    `json:"id"`
+	UserID    string    `json:"user_id"`
+	CreatedAt time.Time `json:"created_at"`
 }
 
 type User struct {
