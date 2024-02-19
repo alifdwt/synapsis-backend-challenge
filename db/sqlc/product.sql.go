@@ -168,7 +168,7 @@ func (q *Queries) ListProducts(ctx context.Context, arg ListProductsParams) ([]L
 
 const updateProduct = `-- name: UpdateProduct :one
 UPDATE products
-SET id = $3, title = $4, description = $5, price = $6, category_id = $7
+SET id = $3, title = $4, description = $5, price = $6, category_id = $7, updated_at = NOW()
 WHERE id = $1
     AND user_id = $2
 RETURNING id, user_id, title, description, price, category_id, created_at, updated_at
