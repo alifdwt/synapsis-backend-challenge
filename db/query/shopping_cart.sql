@@ -1,5 +1,5 @@
 -- name: CreateShoppingCart :one
-INSERT INTO shopping_cart (
+INSERT INTO shopping_carts (
     user_id
 ) VALUES (
     $1
@@ -7,10 +7,15 @@ INSERT INTO shopping_cart (
 RETURNING *;
 
 -- name: GetShoppingCart :one
-SELECT * FROM shopping_cart
+SELECT * FROM shopping_carts
+WHERE user_id = $1
+LIMIT 1;
+
+-- name: GetShoppingCartWithCartItems :one
+SELECT * FROM shopping_cart_with_cart_items
 WHERE user_id = $1
 LIMIT 1;
 
 -- name: DeleteShoppingCart :exec
-DELETE FROM shopping_cart
+DELETE FROM shopping_carts
 WHERE user_id = $1;

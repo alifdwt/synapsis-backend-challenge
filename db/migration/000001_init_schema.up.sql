@@ -36,11 +36,6 @@ CREATE TABLE "purchases" (
   "updated_at" timestamptz NOT NULL DEFAULT (now())
 );
 
-CREATE TABLE books (
-  "id" SERIAL PRIMARY KEY,
-  "data" jsonb
-);
-
 CREATE INDEX ON "products" ("category_id");
 
 CREATE INDEX ON "purchases" ("product_id");

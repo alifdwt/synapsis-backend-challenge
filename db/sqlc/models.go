@@ -5,15 +5,9 @@
 package db
 
 import (
+	"encoding/json"
 	"time"
-
-	dto "github.com/alifdwt/synapsis-backend-challenge/dto"
 )
-
-type Book struct {
-	ID   int32          `json:"id"`
-	Data []dto.BookData `json:"data"`
-}
 
 type CartItem struct {
 	ID        string `json:"id"`
@@ -23,9 +17,9 @@ type CartItem struct {
 }
 
 type CategoriesWithProduct struct {
-	ID       string    `json:"id"`
-	Name     string    `json:"name"`
-	Products []Product `json:"products"`
+	ID       string          `json:"id"`
+	Name     string          `json:"name"`
+	Products json.RawMessage `json:"products"`
 }
 
 type Category struct {
@@ -66,6 +60,13 @@ type ShoppingCart struct {
 	CreatedAt time.Time `json:"created_at"`
 }
 
+type ShoppingCartWithCartItem struct {
+	ID        string          `json:"id"`
+	UserID    string          `json:"user_id"`
+	CreatedAt time.Time       `json:"created_at"`
+	CartItems json.RawMessage `json:"cart_items"`
+}
+
 type User struct {
 	Username          string    `json:"username"`
 	HashedPassword    string    `json:"hashed_password"`
@@ -76,11 +77,11 @@ type User struct {
 }
 
 type UsersWithProduct struct {
-	Username          string    `json:"username"`
-	HashedPassword    string    `json:"hashed_password"`
-	FullName          string    `json:"full_name"`
-	Email             string    `json:"email"`
-	PasswordChangedAt time.Time `json:"password_changed_at"`
-	CreatedAt         time.Time `json:"created_at"`
-	Products          []Product `json:"products"`
+	Username          string          `json:"username"`
+	HashedPassword    string          `json:"hashed_password"`
+	FullName          string          `json:"full_name"`
+	Email             string          `json:"email"`
+	PasswordChangedAt time.Time       `json:"password_changed_at"`
+	CreatedAt         time.Time       `json:"created_at"`
+	Products          json.RawMessage `json:"products"`
 }

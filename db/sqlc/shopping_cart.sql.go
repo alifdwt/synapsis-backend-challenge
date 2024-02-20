@@ -10,7 +10,7 @@ import (
 )
 
 const createShoppingCart = `-- name: CreateShoppingCart :one
-INSERT INTO shopping_cart (
+INSERT INTO shopping_carts (
     user_id
 ) VALUES (
     $1
@@ -26,7 +26,7 @@ func (q *Queries) CreateShoppingCart(ctx context.Context, userID string) (Shoppi
 }
 
 const deleteShoppingCart = `-- name: DeleteShoppingCart :exec
-DELETE FROM shopping_cart
+DELETE FROM shopping_carts
 WHERE user_id = $1
 `
 
@@ -36,7 +36,7 @@ func (q *Queries) DeleteShoppingCart(ctx context.Context, userID string) error {
 }
 
 const getShoppingCart = `-- name: GetShoppingCart :one
-SELECT id, user_id, created_at FROM shopping_cart
+SELECT id, user_id, created_at FROM shopping_carts
 WHERE user_id = $1
 LIMIT 1
 `
@@ -45,5 +45,23 @@ func (q *Queries) GetShoppingCart(ctx context.Context, userID string) (ShoppingC
 	row := q.db.QueryRowContext(ctx, getShoppingCart, userID)
 	var i ShoppingCart
 	err := row.Scan(&i.ID, &i.UserID, &i.CreatedAt)
+	return i, err
+}
+
+const getShoppingCartWithCartItems = `-- name: GetShoppingCartWithCartItems :one
+SELECT id, user_id, created_at, cart_items FROM shopping_cart_with_cart_items
+WHERE user_id = $1
+LIMIT 1
+`
+
+func (q *Queries) GetShoppingCartWithCartItems(ctx context.Context, userID string) (ShoppingCartWithCartItem, error) {
+	row := q.db.QueryRowContext(ctx, getShoppingCartWithCartItems, userID)
+	var i ShoppingCartWithCartItem
+	err := row.Scan(
+		&i.ID,
+		&i.UserID,
+		&i.CreatedAt,
+		&i.CartItems,
+	)
 	return i, err
 }

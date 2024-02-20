@@ -7,8 +7,6 @@ package db
 
 import (
 	"context"
-	"database/sql"
-	"encoding/json"
 )
 
 const createUser = `-- name: CreateUser :one
@@ -75,7 +73,6 @@ WHERE username = $1 LIMIT 1
 func (q *Queries) GetUserWithProducts(ctx context.Context, username string) (UsersWithProduct, error) {
 	row := q.db.QueryRowContext(ctx, getUserWithProducts, username)
 	var i UsersWithProduct
-	var productsJSON string
 	err := row.Scan(
 		&i.Username,
 		&i.HashedPassword,
@@ -83,16 +80,8 @@ func (q *Queries) GetUserWithProducts(ctx context.Context, username string) (Use
 		&i.Email,
 		&i.PasswordChangedAt,
 		&i.CreatedAt,
-		&productsJSON,
+		&i.Products,
 	)
-	if err != nil {
-		return UsersWithProduct{}, err
-	}
-
-	err = json.Unmarshal([]byte(productsJSON), &i.Products)
-    if err != nil {
-        return UsersWithProduct{}, err
-    }
 	return i, err
 }
 
@@ -109,51 +98,32 @@ type ListUserWithProductsParams struct {
 }
 
 func (q *Queries) ListUserWithProducts(ctx context.Context, arg ListUserWithProductsParams) ([]UsersWithProduct, error) {
-    rows, err := q.db.QueryContext(ctx, listUserWithProducts, arg.Limit, arg.Offset)
-    if err != nil {
-        return nil, err
-    }
-    defer rows.Close()
-
-    var users []UsersWithProduct
-
-    for rows.Next() {
-        var user UsersWithProduct
-        var productsJSON sql.NullString
-
-        if err := rows.Scan(
-            &user.Username,
-            &user.HashedPassword,
-            &user.FullName,
-            &user.Email,
-            &user.PasswordChangedAt,
-            &user.CreatedAt,
-            &productsJSON,
-        ); err != nil {
-            return nil, err
-        }
-
-        // Cek apakah productsJSON.Valid, jika tidak valid, set products menjadi array kosong
-        if !productsJSON.Valid {
-            user.Products = []Product{} // Set products menjadi array kosong
-        } else {
-            // Unmarshal JSON ke dalam slice produk jika ada data JSON yang valid
-            var products []Product
-            err := json.Unmarshal([]byte(productsJSON.String), &products)
-            if err != nil {
-                return nil, err
-            }
-
-            user.Products = products
-        }
-
-        users = append(users, user)
-    }
-
-    if err := rows.Err(); err != nil {
-        return nil, err
-    }
-
-    return users, nil
+	rows, err := q.db.QueryContext(ctx, listUserWithProducts, arg.Limit, arg.Offset)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []UsersWithProduct{}
+	for rows.Next() {
+		var i UsersWithProduct
+		if err := rows.Scan(
+			&i.Username,
+			&i.HashedPassword,
+			&i.FullName,
+			&i.Email,
+			&i.PasswordChangedAt,
+			&i.CreatedAt,
+			&i.Products,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }
-

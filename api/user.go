@@ -48,7 +48,7 @@ func newUserWithProductsResponse(user db.UsersWithProduct) userWithProductsRespo
 		Email:     user.Email,
 		FullName:  user.FullName,
 		CreatedAt: user.CreatedAt,
-		Products:  user.Products,
+		// Products:  user.Products,
 	}
 }
 
@@ -115,9 +115,9 @@ func (server *Server) loginUser(ctx *gin.Context) {
 		return
 	}
 
-	if user.Products[0].ID == "" {
-		user.Products = []db.Product{}
-	}
+	// if user.Products[0].ID == "" {
+	// 	user.Products = []db.Product{}
+	// }
 
 	err = util.CheckPassword(req.Password, user.HashedPassword)
 	if err != nil {
@@ -162,9 +162,9 @@ func (server *Server) getUser(ctx *gin.Context) {
 		return
 	}
 
-	if user.Products[0].ID == "" {
-		user.Products = []db.Product{}
-	}
+	// if user.Products[0].ID == "" {
+	// 	user.Products = []db.Product{}
+	// }
 
 	ctx.JSON(http.StatusOK, newUserWithProductsResponse(user))
 }
@@ -192,11 +192,11 @@ func (server *Server) listUsers(ctx *gin.Context) {
 		return
 	}
 
-	for i, user := range users {
-		if user.Products[0].ID == "" {
-			users[i].Products = []db.Product{}
-		}
-	}
+	// for i, user := range users {
+	// 	if user.Products[0].ID == "" {
+	// 		users[i].Products = []db.Product{}
+	// 	}
+	// }
 
 	var userWithProducts []userWithProductsResponse
 	for _, user := range users {

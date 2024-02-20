@@ -75,9 +75,9 @@ func (server *Server) getCategory(ctx *gin.Context) {
 		return
 	}
 
-	if category.Products[0].ID == "" {
-		category.Products = []db.Product{}
-	}
+	// if category.Products[0].ID == "" {
+	// 	category.Products = []db.Product{}
+	// }
 
 	// response := categoryResponse{
 	// 	ID:       category.ID,
@@ -111,11 +111,11 @@ func (server *Server) listCategories(ctx *gin.Context) {
 		return
 	}
 
-	for i, category := range categories {
-		if category.Products[0].ID == "" {
-			categories[i].Products = []db.Product{}
-		}
-	}
+	// for i, category := range categories {
+	// 	if category.Products[0].ID == "" {
+	// 		categories[i].Products = []db.Product{}
+	// 	}
+	// }
 
 	ctx.JSON(http.StatusOK, categories)
 }

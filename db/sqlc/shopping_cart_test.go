@@ -52,3 +52,12 @@ func TestDeleteShoppingCart(t *testing.T) {
 	require.EqualError(t, err, sql.ErrNoRows.Error())
 	require.Empty(t, shoppingCart2)
 }
+
+func TestGetShoppingCartWithCartItems(t *testing.T) {
+	shoppingCart := createRandomShoppingCart(t)
+	createRandomCartItem(t, shoppingCart.ID)
+
+	shoppingCartWithCartItems, err := testQueries.GetShoppingCartWithCartItems(context.Background(), shoppingCart.UserID)
+	require.NoError(t, err)
+	require.NotEmpty(t, shoppingCartWithCartItems)
+}
