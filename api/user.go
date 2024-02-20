@@ -9,7 +9,6 @@ import (
 	db "github.com/alifdwt/synapsis-backend-challenge/db/sqlc"
 	"github.com/alifdwt/synapsis-backend-challenge/util"
 	"github.com/gin-gonic/gin"
-	"github.com/lib/pq"
 )
 
 type createUserRequest struct {
@@ -83,12 +82,9 @@ func (server *Server) createUser(ctx *gin.Context) {
 
 	user, err := server.store.CreateUser(ctx, arg)
 	if err != nil {
-		if pqErr, ok := err.(*pq.Error); ok {
-			switch pqErr.Code.Name() {
-			case "unique_violation":
-				ctx.JSON(http.StatusForbidden, errorResponse(err))
-				return
-			}
+		if db.ErrorCode(err) == db.UniqueViolation {
+			ctx.JSON(http.StatusForbidden, errorResponse(err))
+			return
 		}
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
