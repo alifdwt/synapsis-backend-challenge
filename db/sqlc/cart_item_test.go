@@ -10,7 +10,6 @@ import (
 )
 
 func createRandomCartItem(t *testing.T, cartId string) CartItem {
-	// shoppingCart := createRandomShoppingCart(t)
 	category := createRandomCategory(t)
 
 	product := createRandomProduct(t, category.ID)
@@ -84,7 +83,6 @@ func TestDeleteCartItem(t *testing.T) {
 	require.NoError(t, err)
 
 	cartItem2, err := testQueries.GetCartItem(context.Background(), cartItem1.CartID)
-	// fmt.Print(err)
 	require.Error(t, err)
 	require.EqualError(t, err, sql.ErrNoRows.Error())
 	require.Empty(t, cartItem2)

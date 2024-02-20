@@ -112,16 +112,7 @@ func (server *Server) createCart(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, shoppingCart2)
 }
 
-// type getCartRequest struct {
-// 	UserID string `uri:"user_id" binding:"required"`
-// }
-
 func (server *Server) getCart(ctx *gin.Context) {
-	// var req getCartRequest
-	// if err := ctx.ShouldBindUri(&req); err != nil {
-	// 	ctx.JSON(http.StatusBadRequest, errorResponse(err))
-	// 	return
-	// }
 
 	authPayload := ctx.MustGet(authorizationPayloadKey).(*token.Payload)
 	cart, err := server.store.GetShoppingCartWithCartItems(ctx, authPayload.Issuer)
@@ -138,11 +129,6 @@ func (server *Server) getCart(ctx *gin.Context) {
 }
 
 func (server *Server) deleteCart(ctx *gin.Context) {
-	// var req getCartRequest
-	// if err := ctx.ShouldBindUri(&req); err != nil {
-	// 	ctx.JSON(http.StatusBadRequest, errorResponse(err))
-	// 	return
-	// }
 
 	authPayload := ctx.MustGet(authorizationPayloadKey).(*token.Payload)
 	cart, err := server.store.GetShoppingCartWithCartItems(ctx, authPayload.Issuer)

@@ -2,6 +2,7 @@ package api
 
 import (
 	"database/sql"
+	"encoding/json"
 	"net/http"
 	"time"
 
@@ -43,12 +44,20 @@ type userWithProductsResponse struct {
 }
 
 func newUserWithProductsResponse(user db.UsersWithProduct) userWithProductsResponse {
+	var product []db.Product
+	err := json.Unmarshal(user.Products, &product)
+	if err != nil {
+		return userWithProductsResponse{}
+	}
+	if product[0].ID == "" {
+		product = []db.Product{}
+	}
 	return userWithProductsResponse{
 		Username:  user.Username,
 		Email:     user.Email,
 		FullName:  user.FullName,
 		CreatedAt: user.CreatedAt,
-		// Products:  user.Products,
+		Products:  product,
 	}
 }
 
@@ -115,10 +124,6 @@ func (server *Server) loginUser(ctx *gin.Context) {
 		return
 	}
 
-	// if user.Products[0].ID == "" {
-	// 	user.Products = []db.Product{}
-	// }
-
 	err = util.CheckPassword(req.Password, user.HashedPassword)
 	if err != nil {
 		ctx.JSON(http.StatusUnauthorized, errorResponse(err))
@@ -162,20 +167,18 @@ func (server *Server) getUser(ctx *gin.Context) {
 		return
 	}
 
-	// if user.Products[0].ID == "" {
-	// 	user.Products = []db.Product{}
-	// }
-
 	ctx.JSON(http.StatusOK, newUserWithProductsResponse(user))
 }
 
 type listUsersRequest struct {
-	PageID   int32 `form:"page_id" binding:"required,min=1"`
-	PageSize int32 `form:"page_size" binding:"required,min=5,max=10"`
+	PageID   int32 `form:"page_id"`
+	PageSize int32 `form:"page_size"`
 }
 
 func (server *Server) listUsers(ctx *gin.Context) {
 	var req listUsersRequest
+	req.PageID = 1
+	req.PageSize = 10
 	if err := ctx.ShouldBindQuery(&req); err != nil {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		return
@@ -192,16 +195,10 @@ func (server *Server) listUsers(ctx *gin.Context) {
 		return
 	}
 
-	// for i, user := range users {
-	// 	if user.Products[0].ID == "" {
-	// 		users[i].Products = []db.Product{}
-	// 	}
-	// }
-
-	var userWithProducts []userWithProductsResponse
+	var listUsersResponse []userWithProductsResponse
 	for _, user := range users {
-		userWithProducts = append(userWithProducts, newUserWithProductsResponse(user))
+		listUsersResponse = append(listUsersResponse, newUserWithProductsResponse(user))
 	}
 
-	ctx.JSON(http.StatusOK, userWithProducts)
+	ctx.JSON(http.StatusOK, listUsersResponse)
 }

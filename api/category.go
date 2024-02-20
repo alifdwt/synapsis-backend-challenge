@@ -14,12 +14,6 @@ type createCategoryRequest struct {
 	Name string `json:"name"`
 }
 
-// type categoryResponse struct {
-// 	ID       string      `json:"id"`
-// 	Name     string      `json:"name"`
-// 	Products interface{} `json:"products"`
-// }
-
 func (server *Server) createCategory(ctx *gin.Context) {
 	var req createCategoryRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
@@ -45,12 +39,6 @@ func (server *Server) createCategory(ctx *gin.Context) {
 		return
 	}
 
-	// response := categoryResponse{
-	// 	ID:       category.ID,
-	// 	Name:     category.Name,
-	// 	Products: []productResponse{},
-	// }
-
 	ctx.JSON(http.StatusOK, category)
 }
 
@@ -74,16 +62,6 @@ func (server *Server) getCategory(ctx *gin.Context) {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
-
-	// if category.Products[0].ID == "" {
-	// 	category.Products = []db.Product{}
-	// }
-
-	// response := categoryResponse{
-	// 	ID:       category.ID,
-	// 	Name:     category.Name,
-	// 	Products: category.Products,
-	// }
 
 	ctx.JSON(http.StatusOK, category)
 }
@@ -110,12 +88,6 @@ func (server *Server) listCategories(ctx *gin.Context) {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
-
-	// for i, category := range categories {
-	// 	if category.Products[0].ID == "" {
-	// 		categories[i].Products = []db.Product{}
-	// 	}
-	// }
 
 	ctx.JSON(http.StatusOK, categories)
 }
