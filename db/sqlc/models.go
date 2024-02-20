@@ -5,9 +5,15 @@
 package db
 
 import (
-	"database/sql"
 	"time"
+
+	dto "github.com/alifdwt/synapsis-backend-challenge/dto"
 )
+
+type Book struct {
+	ID   int32          `json:"id"`
+	Data []dto.BookData `json:"data"`
+}
 
 type CartItem struct {
 	ID        string `json:"id"`
@@ -17,9 +23,9 @@ type CartItem struct {
 }
 
 type CategoriesWithProduct struct {
-	ID       string      `json:"id"`
-	Name     string      `json:"name"`
-	Products interface{} `json:"products"`
+	ID       string    `json:"id"`
+	Name     string    `json:"name"`
+	Products []Product `json:"products"`
 }
 
 type Category struct {
@@ -44,14 +50,14 @@ type OrderItem struct {
 }
 
 type Product struct {
-	ID          string         `json:"id"`
-	UserID      string         `json:"user_id"`
-	Title       string         `json:"title"`
-	Description sql.NullString `json:"description"`
-	Price       int64          `json:"price"`
-	CategoryID  string         `json:"category_id"`
-	CreatedAt   time.Time      `json:"created_at"`
-	UpdatedAt   time.Time      `json:"updated_at"`
+	ID          string    `json:"id"`
+	UserID      string    `json:"user_id"`
+	Title       string    `json:"title"`
+	Description string    `json:"description"`
+	Price       int64     `json:"price"`
+	CategoryID  string    `json:"category_id"`
+	CreatedAt   time.Time `json:"created_at"`
+	UpdatedAt   time.Time `json:"updated_at"`
 }
 
 type ShoppingCart struct {
@@ -70,11 +76,11 @@ type User struct {
 }
 
 type UsersWithProduct struct {
-	Username          string      `json:"username"`
-	HashedPassword    string      `json:"hashed_password"`
-	FullName          string      `json:"full_name"`
-	Email             string      `json:"email"`
-	PasswordChangedAt time.Time   `json:"password_changed_at"`
-	CreatedAt         time.Time   `json:"created_at"`
-	Products          interface{} `json:"products"`
+	Username          string    `json:"username"`
+	HashedPassword    string    `json:"hashed_password"`
+	FullName          string    `json:"full_name"`
+	Email             string    `json:"email"`
+	PasswordChangedAt time.Time `json:"password_changed_at"`
+	CreatedAt         time.Time `json:"created_at"`
+	Products          []Product `json:"products"`
 }

@@ -13,7 +13,15 @@ sql:
         overrides:
           - column: "categories_with_products.products"
             go_type:
-              type: "interface{}"
+              type: "Product"
+              slice: true
           - column: "users_with_products.products"
             go_type:
-              type: "interface{}"
+              type: "Product"
+              slice: true
+          # - column: "books.data"
+          #   go_type:
+          #     import: "github.com/alifdwt/synapsis-backend-challenge/dto"
+          #     package: dto
+          #     type: "BookData"
+          #     slice: true

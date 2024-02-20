@@ -15,3 +15,9 @@ WHERE username = $1 LIMIT 1;
 -- name: GetUserWithProducts :one
 SELECT * FROM users_with_products
 WHERE username = $1 LIMIT 1;
+
+-- name: ListUserWithProducts :many
+SELECT * FROM users_with_products
+ORDER BY created_at
+LIMIT $1
+OFFSET $2;

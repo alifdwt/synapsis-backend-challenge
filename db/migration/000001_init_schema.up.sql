@@ -13,7 +13,7 @@ CREATE TABLE "products" (
   "id" varchar PRIMARY KEY DEFAULT (uuid_generate_v4()),
   "user_id" varchar NOT NULL,
   "title" varchar NOT NULL,
-  "description" varchar,
+  "description" varchar NOT NULL,
   "price" bigint NOT NULL,
   "category_id" varchar NOT NULL,
   "created_at" timestamptz NOT NULL DEFAULT (now()),
@@ -36,6 +36,11 @@ CREATE TABLE "purchases" (
   "updated_at" timestamptz NOT NULL DEFAULT (now())
 );
 
+CREATE TABLE books (
+  "id" SERIAL PRIMARY KEY,
+  "data" jsonb
+);
+
 CREATE INDEX ON "products" ("category_id");
 
 CREATE INDEX ON "purchases" ("product_id");
@@ -53,7 +58,7 @@ ALTER TABLE "purchases" ADD FOREIGN KEY ("product_id") REFERENCES "products" ("i
 CREATE VIEW "categories_with_products" AS
 SELECT
     "categories".*,
-    JSON_AGG("products".*) AS "products"
+    JSONB_AGG("products".*) AS "products"
 FROM
     "categories"
 LEFT JOIN "products" ON "products"."category_id" = "categories"."id"
@@ -63,7 +68,7 @@ GROUP BY
 CREATE VIEW "users_with_products" AS
 SELECT
     "users".*,
-    JSON_AGG("products".*) AS "products"
+    JSONB_AGG("products".*) AS "products"
 FROM
     "users"
 LEFT JOIN "products" ON "products"."user_id" = "users"."username"

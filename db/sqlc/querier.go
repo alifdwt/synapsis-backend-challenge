@@ -20,6 +20,7 @@ type Querier interface {
 	DeleteCategory(ctx context.Context, id string) error
 	DeleteProduct(ctx context.Context, id string) error
 	DeleteShoppingCart(ctx context.Context, userID string) error
+	GetBook(ctx context.Context, id int32) (Book, error)
 	GetCartItem(ctx context.Context, id string) (CartItem, error)
 	GetCartItemsByUserID(ctx context.Context, cartID string) ([]CartItem, error)
 	GetCategory(ctx context.Context, id string) (CategoriesWithProduct, error)
@@ -32,6 +33,7 @@ type Querier interface {
 	ListOrderByUserId(ctx context.Context, userID string) ([]Order, error)
 	ListOrderItemsByOrderID(ctx context.Context, orderID string) ([]OrderItem, error)
 	ListProducts(ctx context.Context, arg ListProductsParams) ([]ListProductsRow, error)
+	ListUserWithProducts(ctx context.Context, arg ListUserWithProductsParams) ([]UsersWithProduct, error)
 	UpdateCartItem(ctx context.Context, arg UpdateCartItemParams) (CartItem, error)
 	UpdateCategory(ctx context.Context, arg UpdateCategoryParams) (Category, error)
 	UpdateProduct(ctx context.Context, arg UpdateProductParams) (Product, error)

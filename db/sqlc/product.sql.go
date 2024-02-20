@@ -7,7 +7,6 @@ package db
 
 import (
 	"context"
-	"database/sql"
 	"time"
 )
 
@@ -26,12 +25,12 @@ RETURNING id, user_id, title, description, price, category_id, created_at, updat
 `
 
 type CreateProductParams struct {
-	ID          string         `json:"id"`
-	UserID      string         `json:"user_id"`
-	Title       string         `json:"title"`
-	Description sql.NullString `json:"description"`
-	Price       int64          `json:"price"`
-	CategoryID  string         `json:"category_id"`
+	ID          string `json:"id"`
+	UserID      string `json:"user_id"`
+	Title       string `json:"title"`
+	Description string `json:"description"`
+	Price       int64  `json:"price"`
+	CategoryID  string `json:"category_id"`
 }
 
 func (q *Queries) CreateProduct(ctx context.Context, arg CreateProductParams) (Product, error) {
@@ -76,16 +75,16 @@ LIMIT 1
 `
 
 type GetProductRow struct {
-	ID          string         `json:"id"`
-	UserID      string         `json:"user_id"`
-	Title       string         `json:"title"`
-	Description sql.NullString `json:"description"`
-	Price       int64          `json:"price"`
-	CategoryID  string         `json:"category_id"`
-	CreatedAt   time.Time      `json:"created_at"`
-	UpdatedAt   time.Time      `json:"updated_at"`
-	ID_2        string         `json:"id_2"`
-	Name        string         `json:"name"`
+	ID          string    `json:"id"`
+	UserID      string    `json:"user_id"`
+	Title       string    `json:"title"`
+	Description string    `json:"description"`
+	Price       int64     `json:"price"`
+	CategoryID  string    `json:"category_id"`
+	CreatedAt   time.Time `json:"created_at"`
+	UpdatedAt   time.Time `json:"updated_at"`
+	ID_2        string    `json:"id_2"`
+	Name        string    `json:"name"`
 }
 
 func (q *Queries) GetProduct(ctx context.Context, id string) (GetProductRow, error) {
@@ -120,16 +119,16 @@ type ListProductsParams struct {
 }
 
 type ListProductsRow struct {
-	ID          string         `json:"id"`
-	UserID      string         `json:"user_id"`
-	Title       string         `json:"title"`
-	Description sql.NullString `json:"description"`
-	Price       int64          `json:"price"`
-	CategoryID  string         `json:"category_id"`
-	CreatedAt   time.Time      `json:"created_at"`
-	UpdatedAt   time.Time      `json:"updated_at"`
-	ID_2        string         `json:"id_2"`
-	Name        string         `json:"name"`
+	ID          string    `json:"id"`
+	UserID      string    `json:"user_id"`
+	Title       string    `json:"title"`
+	Description string    `json:"description"`
+	Price       int64     `json:"price"`
+	CategoryID  string    `json:"category_id"`
+	CreatedAt   time.Time `json:"created_at"`
+	UpdatedAt   time.Time `json:"updated_at"`
+	ID_2        string    `json:"id_2"`
+	Name        string    `json:"name"`
 }
 
 func (q *Queries) ListProducts(ctx context.Context, arg ListProductsParams) ([]ListProductsRow, error) {
@@ -175,13 +174,13 @@ RETURNING id, user_id, title, description, price, category_id, created_at, updat
 `
 
 type UpdateProductParams struct {
-	ID          string         `json:"id"`
-	UserID      string         `json:"user_id"`
-	ID_2        string         `json:"id_2"`
-	Title       string         `json:"title"`
-	Description sql.NullString `json:"description"`
-	Price       int64          `json:"price"`
-	CategoryID  string         `json:"category_id"`
+	ID          string `json:"id"`
+	UserID      string `json:"user_id"`
+	ID_2        string `json:"id_2"`
+	Title       string `json:"title"`
+	Description string `json:"description"`
+	Price       int64  `json:"price"`
+	CategoryID  string `json:"category_id"`
 }
 
 func (q *Queries) UpdateProduct(ctx context.Context, arg UpdateProductParams) (Product, error) {

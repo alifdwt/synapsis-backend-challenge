@@ -34,6 +34,24 @@ func newUserResponse(user db.User) userResponse {
 	}
 }
 
+type userWithProductsResponse struct {
+	Username  string       `json:"username"`
+	Email     string       `json:"email"`
+	FullName  string       `json:"full_name"`
+	CreatedAt time.Time    `json:"created_at"`
+	Products  []db.Product `json:"products"`
+}
+
+func newUserWithProductsResponse(user db.UsersWithProduct) userWithProductsResponse {
+	return userWithProductsResponse{
+		Username:  user.Username,
+		Email:     user.Email,
+		FullName:  user.FullName,
+		CreatedAt: user.CreatedAt,
+		Products:  user.Products,
+	}
+}
+
 func (server *Server) createUser(ctx *gin.Context) {
 	var req createUserRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
@@ -77,8 +95,8 @@ type loginUserRequest struct {
 }
 
 type loginUserResponse struct {
-	AccessToken string       `json:"access_token"`
-	User        userResponse `json:"user"`
+	AccessToken string                   `json:"access_token"`
+	User        userWithProductsResponse `json:"user"`
 }
 
 func (server *Server) loginUser(ctx *gin.Context) {
@@ -87,7 +105,7 @@ func (server *Server) loginUser(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 	}
 
-	user, err := server.store.GetUser(ctx, req.Username)
+	user, err := server.store.GetUserWithProducts(ctx, req.Username)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			ctx.JSON(http.StatusNotFound, errorResponse(err))
@@ -95,6 +113,10 @@ func (server *Server) loginUser(ctx *gin.Context) {
 		}
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
+	}
+
+	if user.Products[0].ID == "" {
+		user.Products = []db.Product{}
 	}
 
 	err = util.CheckPassword(req.Password, user.HashedPassword)
@@ -114,7 +136,72 @@ func (server *Server) loginUser(ctx *gin.Context) {
 
 	response := loginUserResponse{
 		AccessToken: accessToken,
-		User:        newUserResponse(user),
+		User:        newUserWithProductsResponse(user),
 	}
 	ctx.JSON(http.StatusOK, response)
+}
+
+type getUserRequest struct {
+	ID string `uri:"id" binding:"required,min=1"`
+}
+
+func (server *Server) getUser(ctx *gin.Context) {
+	var req getUserRequest
+	if err := ctx.ShouldBindUri(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		return
+	}
+
+	user, err := server.store.GetUserWithProducts(ctx, req.ID)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			ctx.JSON(http.StatusNotFound, errorResponse(err))
+			return
+		}
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
+
+	if user.Products[0].ID == "" {
+		user.Products = []db.Product{}
+	}
+
+	ctx.JSON(http.StatusOK, newUserWithProductsResponse(user))
+}
+
+type listUsersRequest struct {
+	PageID   int32 `form:"page_id" binding:"required,min=1"`
+	PageSize int32 `form:"page_size" binding:"required,min=5,max=10"`
+}
+
+func (server *Server) listUsers(ctx *gin.Context) {
+	var req listUsersRequest
+	if err := ctx.ShouldBindQuery(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		return
+	}
+
+	arg := db.ListUserWithProductsParams{
+		Limit:  req.PageSize,
+		Offset: (req.PageID - 1) * req.PageSize,
+	}
+
+	users, err := server.store.ListUserWithProducts(ctx, arg)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
+
+	for i, user := range users {
+		if user.Products[0].ID == "" {
+			users[i].Products = []db.Product{}
+		}
+	}
+
+	var userWithProducts []userWithProductsResponse
+	for _, user := range users {
+		userWithProducts = append(userWithProducts, newUserWithProductsResponse(user))
+	}
+
+	ctx.JSON(http.StatusOK, userWithProducts)
 }

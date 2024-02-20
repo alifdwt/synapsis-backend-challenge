@@ -37,11 +37,17 @@ func (server *Server) setupRouter() {
 	router.POST("/users/login", server.loginUser)
 	router.GET("/products/:id", server.getProduct)
 	router.GET("/products", server.listProducts)
+	router.GET("/categories", server.listCategories)
+	router.GET("/categories/:id", server.getCategory)
+	router.GET("/users/:id", server.getUser)
+	router.GET("/users", server.listUsers)
+	// router.GET("/books/:id", server.getBook)
 
 	authRoutes := router.Group("/").Use(authMiddleware(server.tokenMaker))
 	authRoutes.POST("/products", server.createProduct)
 	authRoutes.PUT("/products/:id", server.updateProduct)
 	authRoutes.DELETE("/products/:id", server.deleteProduct)
+	authRoutes.POST("/categories", server.createCategory)
 
 	server.router = router
 }

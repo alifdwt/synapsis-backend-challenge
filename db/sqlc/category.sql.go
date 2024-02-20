@@ -7,6 +7,7 @@ package db
 
 import (
 	"context"
+	"encoding/json"
 )
 
 const createCategory = `-- name: CreateCategory :one
@@ -46,10 +47,21 @@ WHERE id = $1 LIMIT 1
 `
 
 func (q *Queries) GetCategory(ctx context.Context, id string) (CategoriesWithProduct, error) {
-	row := q.db.QueryRowContext(ctx, getCategory, id)
-	var i CategoriesWithProduct
-	err := row.Scan(&i.ID, &i.Name, &i.Products)
-	return i, err
+    row := q.db.QueryRowContext(ctx, getCategory, id)
+    var i CategoriesWithProduct
+    var productsJSON string
+    err := row.Scan(&i.ID, &i.Name, &productsJSON)
+    if err != nil {
+        return CategoriesWithProduct{}, err
+    }
+
+    // Unmarshal JSON ke slice produk
+    err = json.Unmarshal([]byte(productsJSON), &i.Products)
+    if err != nil {
+        return CategoriesWithProduct{}, err
+    }
+
+    return i, nil
 }
 
 const listCategories = `-- name: ListCategories :many
@@ -65,27 +77,40 @@ type ListCategoriesParams struct {
 }
 
 func (q *Queries) ListCategories(ctx context.Context, arg ListCategoriesParams) ([]CategoriesWithProduct, error) {
-	rows, err := q.db.QueryContext(ctx, listCategories, arg.Limit, arg.Offset)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	items := []CategoriesWithProduct{}
-	for rows.Next() {
-		var i CategoriesWithProduct
-		if err := rows.Scan(&i.ID, &i.Name, &i.Products); err != nil {
-			return nil, err
-		}
-		items = append(items, i)
-	}
-	if err := rows.Close(); err != nil {
-		return nil, err
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return items, nil
+    rows, err := q.db.QueryContext(ctx, listCategories, arg.Limit, arg.Offset)
+    if err != nil {
+        return nil, err
+    }
+    defer rows.Close()
+
+    var categories []CategoriesWithProduct
+
+    for rows.Next() {
+        var category CategoriesWithProduct
+        var productsJSON string
+
+        if err := rows.Scan(&category.ID, &category.Name, &productsJSON); err != nil {
+            return nil, err
+        }
+
+        // Unmarshal JSON ke dalam slice produk
+        var products []Product
+        err := json.Unmarshal([]byte(productsJSON), &products)
+        if err != nil {
+            return nil, err
+        }
+
+        category.Products = products
+        categories = append(categories, category)
+    }
+
+    if err := rows.Err(); err != nil {
+        return nil, err
+    }
+
+    return categories, nil
 }
+
 
 const updateCategory = `-- name: UpdateCategory :one
 UPDATE categories

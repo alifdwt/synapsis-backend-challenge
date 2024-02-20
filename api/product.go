@@ -49,15 +49,12 @@ func (server *Server) createProduct(ctx *gin.Context) {
 
 	authPayload := ctx.MustGet(authorizationPayloadKey).(*token.Payload)
 	arg := db.CreateProductParams{
-		ID:     util.ConvertTitleToId(req.Title),
-		UserID: authPayload.Issuer,
-		Title:  req.Title,
-		Description: sql.NullString{
-			String: req.Description,
-			Valid:  true,
-		},
-		Price:      int64(req.Price),
-		CategoryID: req.CategoryID,
+		ID:          util.ConvertTitleToId(req.Title),
+		UserID:      authPayload.Issuer,
+		Title:       req.Title,
+		Description: req.Description,
+		Price:       int64(req.Price),
+		CategoryID:  req.CategoryID,
 	}
 
 	product, err := server.store.CreateProduct(ctx, arg)
@@ -77,7 +74,7 @@ func (server *Server) createProduct(ctx *gin.Context) {
 		ID:          product.ID,
 		UserID:      product.UserID,
 		Title:       product.Title,
-		Description: product.Description.String,
+		Description: product.Description,
 		Price:       int32(product.Price),
 		Category: db.Category{
 			ID:   product.CategoryID,
@@ -115,7 +112,7 @@ func (server *Server) getProduct(ctx *gin.Context) {
 		ID:          product.ID,
 		UserID:      product.UserID,
 		Title:       product.Title,
-		Description: product.Description.String,
+		Description: product.Description,
 		Price:       int32(product.Price),
 		Category: db.Category{
 			ID:   product.ID_2,
@@ -157,7 +154,7 @@ func (server *Server) listProducts(ctx *gin.Context) {
 			ID:          product.ID,
 			UserID:      product.UserID,
 			Title:       product.Title,
-			Description: product.Description.String,
+			Description: product.Description,
 			Price:       int32(product.Price),
 			Category: db.Category{
 				ID:   product.ID_2,
@@ -228,16 +225,13 @@ func (server *Server) updateProduct(ctx *gin.Context) {
 	}
 
 	arg := db.UpdateProductParams{
-		ID:     uri.ID,
-		ID_2:   util.ConvertTitleToId(req.Title),
-		UserID: authPayload.Issuer,
-		Title:  req.Title,
-		Description: sql.NullString{
-			String: req.Description,
-			Valid:  true,
-		},
-		Price:      int64(req.Price),
-		CategoryID: req.CategoryID,
+		ID:          uri.ID,
+		ID_2:        util.ConvertTitleToId(req.Title),
+		UserID:      authPayload.Issuer,
+		Title:       req.Title,
+		Description: req.Description,
+		Price:       int64(req.Price),
+		CategoryID:  req.CategoryID,
 	}
 
 	updatedProduct, err := server.store.UpdateProduct(ctx, arg)
@@ -257,7 +251,7 @@ func (server *Server) updateProduct(ctx *gin.Context) {
 		ID:          updatedProduct.ID,
 		UserID:      updatedProduct.UserID,
 		Title:       updatedProduct.Title,
-		Description: updatedProduct.Description.String,
+		Description: updatedProduct.Description,
 		Price:       int32(updatedProduct.Price),
 		Category: db.Category{
 			ID:   updatedProduct.CategoryID,
@@ -304,7 +298,7 @@ func (server *Server) deleteProduct(ctx *gin.Context) {
 		ID:          product.ID,
 		UserID:      product.UserID,
 		Title:       product.Title,
-		Description: product.Description.String,
+		Description: product.Description,
 		Price:       int32(product.Price),
 		Category: db.Category{
 			ID:   product.ID_2,

@@ -17,15 +17,12 @@ func createRandomProduct(t *testing.T, categoryId string) Product {
 
 	productName := util.RandomString(6)
 	arg := CreateProductParams{
-		ID:     productName,
-		UserID: user.Username,
-		Title:  cases.Title(language.English).String(productName),
-		Description: sql.NullString{
-			String: util.RandomString(6),
-			Valid:  true,
-		},
-		Price:      util.RandomMoney(),
-		CategoryID: categoryId,
+		ID:          productName,
+		UserID:      user.Username,
+		Title:       cases.Title(language.English).String(productName),
+		Description: util.RandomString(25),
+		Price:       util.RandomMoney(),
+		CategoryID:  categoryId,
 	}
 
 	product, err := testQueries.CreateProduct(context.Background(), arg)
@@ -35,7 +32,7 @@ func createRandomProduct(t *testing.T, categoryId string) Product {
 	require.Equal(t, arg.ID, product.ID)
 	require.Equal(t, arg.UserID, product.UserID)
 	require.Equal(t, arg.Title, product.Title)
-	require.Equal(t, arg.Description.String, product.Description.String)
+	require.Equal(t, arg.Description, product.Description)
 	require.Equal(t, arg.Price, product.Price)
 	require.Equal(t, arg.CategoryID, product.CategoryID)
 
@@ -60,7 +57,7 @@ func TestGetProduct(t *testing.T) {
 	require.Equal(t, product1.ID, product2.ID)
 	require.Equal(t, product1.UserID, product2.UserID)
 	require.Equal(t, product1.Title, product2.Title)
-	require.Equal(t, product1.Description.String, product2.Description.String)
+	require.Equal(t, product1.Description, product2.Description)
 	require.Equal(t, product1.Price, product2.Price)
 	require.Equal(t, product1.CategoryID, product2.CategoryID)
 
@@ -93,16 +90,13 @@ func TestUpdateProduct(t *testing.T) {
 
 	productName := util.RandomString(6)
 	arg := UpdateProductParams{
-		ID:     product1.ID,
-		ID_2:   productName,
-		UserID: product1.UserID,
-		Title:  cases.Title(language.English).String(productName),
-		Price:  util.RandomMoney(),
-		Description: sql.NullString{
-			String: util.RandomString(20),
-			Valid:  true,
-		},
-		CategoryID: product1.CategoryID,
+		ID:          product1.ID,
+		ID_2:        productName,
+		UserID:      product1.UserID,
+		Title:       cases.Title(language.English).String(productName),
+		Price:       util.RandomMoney(),
+		Description: util.RandomString(20),
+		CategoryID:  product1.CategoryID,
 	}
 
 	product2, err := testQueries.UpdateProduct(context.Background(), arg)
@@ -112,7 +106,7 @@ func TestUpdateProduct(t *testing.T) {
 	require.NotEqual(t, product1.ID, product2.ID)
 	require.NotEqual(t, product1.Title, product2.Title)
 	require.NotEqual(t, product1.Price, product2.Price)
-	require.NotEqual(t, product1.Description.String, product2.Description.String)
+	require.NotEqual(t, product1.Description, product2.Description)
 	require.Equal(t, product1.CategoryID, product2.CategoryID)
 	require.Equal(t, product1.UserID, product2.UserID)
 
