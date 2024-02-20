@@ -43,6 +43,15 @@ type OrderItem struct {
 	PriceAtPurchase int64  `json:"price_at_purchase"`
 }
 
+type OrderWithOrderItem struct {
+	ID            string          `json:"id"`
+	UserID        string          `json:"user_id"`
+	PaymentMethod string          `json:"payment_method"`
+	TotalCost     int64           `json:"total_cost"`
+	OrderDate     time.Time       `json:"order_date"`
+	OrderItems    json.RawMessage `json:"order_items"`
+}
+
 type Product struct {
 	ID          string    `json:"id"`
 	UserID      string    `json:"user_id"`

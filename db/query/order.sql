@@ -8,10 +8,10 @@ INSERT INTO orders (
 ) RETURNING *;
 
 -- name: GetOrder :one
-SELECT * FROM orders
+SELECT * FROM order_with_order_items
 WHERE id = $1 LIMIT 1;
 
--- name: ListOrderByUserId :many
-SELECT * FROM orders
+-- name: ListOrders :many
+SELECT * FROM order_with_order_items
 WHERE user_id = $1
 ORDER BY order_date DESC;

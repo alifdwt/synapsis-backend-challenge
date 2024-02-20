@@ -5,6 +5,8 @@ import (
 	"github.com/alifdwt/synapsis-backend-challenge/token"
 	"github.com/alifdwt/synapsis-backend-challenge/util"
 	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
+	"github.com/go-playground/validator/v10"
 )
 
 type Server struct {
@@ -26,6 +28,10 @@ func NewServer(config util.Config, store db.Store) (*Server, error) {
 		tokenMaker: tokenMaker,
 	}
 
+	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
+		v.RegisterValidation("payment_method", validPaymentMethod)
+	}
+
 	server.setupRouter()
 	return server, nil
 }
@@ -41,16 +47,17 @@ func (server *Server) setupRouter() {
 	router.GET("/categories/:id", server.getCategory)
 	router.GET("/users/:id", server.getUser)
 	router.GET("/users", server.listUsers)
-	// router.GET("/books/:id", server.getBook)
 
 	authRoutes := router.Group("/").Use(authMiddleware(server.tokenMaker))
 	authRoutes.POST("/products", server.createProduct)
 	authRoutes.PUT("/products/:id", server.updateProduct)
 	authRoutes.DELETE("/products/:id", server.deleteProduct)
 	authRoutes.POST("/categories", server.createCategory)
-	authRoutes.GET("/cart/:user_id", server.getCart)
+	authRoutes.GET("/cart", server.getCart)
 	authRoutes.POST("/cart", server.createCart)
-	authRoutes.DELETE("/cart/:user_id", server.deleteCart)
+	authRoutes.DELETE("/cart", server.deleteCart)
+	authRoutes.POST("/order", server.createOrder)
+	authRoutes.GET("/orders", server.listOrders)
 
 	server.router = router
 }

@@ -39,44 +39,46 @@ func (q *Queries) CreateOrder(ctx context.Context, arg CreateOrderParams) (Order
 }
 
 const getOrder = `-- name: GetOrder :one
-SELECT id, user_id, payment_method, total_cost, order_date FROM orders
+SELECT id, user_id, payment_method, total_cost, order_date, order_items FROM order_with_order_items
 WHERE id = $1 LIMIT 1
 `
 
-func (q *Queries) GetOrder(ctx context.Context, id string) (Order, error) {
+func (q *Queries) GetOrder(ctx context.Context, id string) (OrderWithOrderItem, error) {
 	row := q.db.QueryRowContext(ctx, getOrder, id)
-	var i Order
+	var i OrderWithOrderItem
 	err := row.Scan(
 		&i.ID,
 		&i.UserID,
 		&i.PaymentMethod,
 		&i.TotalCost,
 		&i.OrderDate,
+		&i.OrderItems,
 	)
 	return i, err
 }
 
-const listOrderByUserId = `-- name: ListOrderByUserId :many
-SELECT id, user_id, payment_method, total_cost, order_date FROM orders
+const listOrders = `-- name: ListOrders :many
+SELECT id, user_id, payment_method, total_cost, order_date, order_items FROM order_with_order_items
 WHERE user_id = $1
 ORDER BY order_date DESC
 `
 
-func (q *Queries) ListOrderByUserId(ctx context.Context, userID string) ([]Order, error) {
-	rows, err := q.db.QueryContext(ctx, listOrderByUserId, userID)
+func (q *Queries) ListOrders(ctx context.Context, userID string) ([]OrderWithOrderItem, error) {
+	rows, err := q.db.QueryContext(ctx, listOrders, userID)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	items := []Order{}
+	items := []OrderWithOrderItem{}
 	for rows.Next() {
-		var i Order
+		var i OrderWithOrderItem
 		if err := rows.Scan(
 			&i.ID,
 			&i.UserID,
 			&i.PaymentMethod,
 			&i.TotalCost,
 			&i.OrderDate,
+			&i.OrderItems,
 		); err != nil {
 			return nil, err
 		}

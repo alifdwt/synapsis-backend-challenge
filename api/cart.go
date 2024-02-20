@@ -3,7 +3,6 @@ package api
 import (
 	"database/sql"
 	"encoding/json"
-	"errors"
 	"net/http"
 	"time"
 
@@ -113,31 +112,25 @@ func (server *Server) createCart(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, shoppingCart2)
 }
 
-type getCartRequest struct {
-	UserID string `uri:"user_id" binding:"required"`
-}
+// type getCartRequest struct {
+// 	UserID string `uri:"user_id" binding:"required"`
+// }
 
 func (server *Server) getCart(ctx *gin.Context) {
-	var req getCartRequest
-	if err := ctx.ShouldBindUri(&req); err != nil {
-		ctx.JSON(http.StatusBadRequest, errorResponse(err))
-		return
-	}
+	// var req getCartRequest
+	// if err := ctx.ShouldBindUri(&req); err != nil {
+	// 	ctx.JSON(http.StatusBadRequest, errorResponse(err))
+	// 	return
+	// }
 
 	authPayload := ctx.MustGet(authorizationPayloadKey).(*token.Payload)
-	cart, err := server.store.GetShoppingCartWithCartItems(ctx, req.UserID)
+	cart, err := server.store.GetShoppingCartWithCartItems(ctx, authPayload.Issuer)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			ctx.JSON(http.StatusNotFound, errorResponse(err))
 			return
 		}
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
-		return
-	}
-
-	if cart.UserID != authPayload.Issuer {
-		err := errors.New("cart doesn't belong to the authenticated user")
-		ctx.JSON(http.StatusUnauthorized, errorResponse(err))
 		return
 	}
 
@@ -145,14 +138,14 @@ func (server *Server) getCart(ctx *gin.Context) {
 }
 
 func (server *Server) deleteCart(ctx *gin.Context) {
-	var req getCartRequest
-	if err := ctx.ShouldBindUri(&req); err != nil {
-		ctx.JSON(http.StatusBadRequest, errorResponse(err))
-		return
-	}
+	// var req getCartRequest
+	// if err := ctx.ShouldBindUri(&req); err != nil {
+	// 	ctx.JSON(http.StatusBadRequest, errorResponse(err))
+	// 	return
+	// }
 
 	authPayload := ctx.MustGet(authorizationPayloadKey).(*token.Payload)
-	cart, err := server.store.GetShoppingCartWithCartItems(ctx, req.UserID)
+	cart, err := server.store.GetShoppingCartWithCartItems(ctx, authPayload.Issuer)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			ctx.JSON(http.StatusNotFound, errorResponse(err))
@@ -162,13 +155,7 @@ func (server *Server) deleteCart(ctx *gin.Context) {
 		return
 	}
 
-	if cart.UserID != authPayload.Issuer {
-		err := errors.New("cart doesn't belong to the authenticated user")
-		ctx.JSON(http.StatusUnauthorized, errorResponse(err))
-		return
-	}
-
-	err = server.store.DeleteShoppingCart(ctx, req.UserID)
+	err = server.store.DeleteShoppingCart(ctx, cart.ID)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return

@@ -13,7 +13,7 @@ func createRandomOrder(t *testing.T) Order {
 	user := createRandomUser(t)
 	arg := CreateOrderParams{
 		UserID:        user.Username,
-		PaymentMethod: "COD",
+		PaymentMethod: util.RandomPaymentMethod(),
 		TotalCost:     util.RandomMoney(),
 	}
 
@@ -52,7 +52,7 @@ func TestGetOrder(t *testing.T) {
 func TestListOrderByUserId(t *testing.T) {
 	order := createRandomOrder(t)
 
-	orders, err := testQueries.ListOrderByUserId(context.Background(), order.UserID)
+	orders, err := testQueries.ListOrders(context.Background(), order.UserID)
 	require.NoError(t, err)
 	require.NotEmpty(t, orders)
 

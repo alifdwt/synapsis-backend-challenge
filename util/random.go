@@ -45,3 +45,9 @@ func RandomMoney() int64 {
 func RandomEmail() string {
 	return fmt.Sprintf("%s@email.com", RandomString(6))
 }
+
+func RandomPaymentMethod() string {
+	paymentMethod := []string{COD, BANK_TRANSFER, E_WALLET}
+	n := len(paymentMethod)
+	return paymentMethod[rand.Intn(n)]
+}
