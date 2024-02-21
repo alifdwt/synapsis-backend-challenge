@@ -34,6 +34,16 @@ type productResponse struct {
 	UpdatedAt   time.Time   `json:"updated_at"`
 }
 
+// createProduct godoc
+// @Summary      Create new product
+// @Description  Add a new product
+// @Tags         product
+// @Accept       json
+// @Produce      json
+// @Param        product  body      createProductRequest  true  "Product"
+// @Success      200   {object}  productResponse
+// @Security	 BearerAuth
+// @Router       /products [post]
 func (server *Server) createProduct(ctx *gin.Context) {
 	var req createProductRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
@@ -91,6 +101,15 @@ type getProductRequest struct {
 	ID string `uri:"id" binding:"required,min=1"`
 }
 
+// getProduct godoc
+// @Summary      Get product
+// @Description  Get product
+// @Tags         product
+// @Accept       json
+// @Produce      json
+// @Param        id  path      string  true  "Product ID"
+// @Success      200   {object}  productResponse
+// @Router       /products/{id} [get]
 func (server *Server) getProduct(ctx *gin.Context) {
 	var req getProductRequest
 	if err := ctx.ShouldBindUri(&req); err != nil {
@@ -130,6 +149,16 @@ type listProductsRequest struct {
 	PageSize int32 `form:"page_size"`
 }
 
+// listProducts godoc
+// @Summary      List products
+// @Description  List products
+// @Tags         product
+// @Accept       json
+// @Produce      json
+// @Param        page_id   query     int32  false  "Page ID"
+// @Param        page_size query     int32  false  "Page Size"
+// @Success      200       {object}  []productResponse
+// @Router       /products [get]
 func (server *Server) listProducts(ctx *gin.Context) {
 	var req listProductsRequest
 	req.PageID = 1
@@ -190,6 +219,16 @@ type updateProductRequest struct {
 // 	CategoryID  string `json:"category_id"`
 // }
 
+// updateProduct godoc
+// @Summary      Update product
+// @Description  Update product
+// @Tags         product
+// @Accept       json
+// @Produce      json
+// @Param        id    path      string  true  "Product ID"
+// @Success      200   {object}  productResponse
+// @Security	 BearerAuth
+// @Router       /products/{id} [put]
 func (server *Server) updateProduct(ctx *gin.Context) {
 	var uri updateProductURI
 	if err := ctx.ShouldBindUri(&uri); err != nil {
@@ -266,6 +305,16 @@ func (server *Server) updateProduct(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, response)
 }
 
+// deleteProduct godoc
+// @Summary      Delete product
+// @Description  Delete product
+// @Tags         product
+// @Accept       json
+// @Produce      json
+// @Param        id  path      string  true  "Product ID"
+// @Success      200   {object}  productResponse
+// @Security	 BearerAuth
+// @Router       /products/{id} [delete]
 func (server *Server) deleteProduct(ctx *gin.Context) {
 	var req getProductRequest
 	if err := ctx.ShouldBindUri(&req); err != nil {

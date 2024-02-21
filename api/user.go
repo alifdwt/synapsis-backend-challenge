@@ -60,6 +60,15 @@ func newUserWithProductsResponse(user db.UsersWithProduct) userWithProductsRespo
 	}
 }
 
+// createUser godoc
+// @Summary      Create new user
+// @Description  Add a new user
+// @Tags         user
+// @Accept       json
+// @Produce      json
+// @Param        user  body      createUserRequest  true  "User"
+// @Success      200   {object}  userResponse
+// @Router       /users [post]
 func (server *Server) createUser(ctx *gin.Context) {
 	var req createUserRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
@@ -104,6 +113,15 @@ type loginUserResponse struct {
 	User        userWithProductsResponse `json:"user"`
 }
 
+// loginUser godoc
+// @Summary      Login user
+// @Description  Login user
+// @Tags         user
+// @Accept       json
+// @Produce      json
+// @Param        user  body      loginUserRequest  true  "User"
+// @Success      200   {object}  loginUserResponse
+// @Router       /users/login [post]
 func (server *Server) loginUser(ctx *gin.Context) {
 	var req loginUserRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
@@ -146,6 +164,15 @@ type getUserRequest struct {
 	ID string `uri:"id" binding:"required,min=1"`
 }
 
+// getUser godoc
+// @Summary      Get user
+// @Description  Get user
+// @Tags         user
+// @Accept       json
+// @Produce      json
+// @Param        user  path      string  true  "User"
+// @Success      200   {object}  userWithProductsResponse
+// @Router       /users/{id} [get]
 func (server *Server) getUser(ctx *gin.Context) {
 	var req getUserRequest
 	if err := ctx.ShouldBindUri(&req); err != nil {
@@ -171,6 +198,15 @@ type listUsersRequest struct {
 	PageSize int32 `form:"page_size"`
 }
 
+// listUsers godoc
+// @Summary      List users
+// @Description  List users
+// @Tags         user
+// @Accept       json
+// @Produce      json
+// @Param        user  query     listUsersRequest  true  "User"
+// @Success      200   {array}   userWithProductsResponse
+// @Router       /users [get]
 func (server *Server) listUsers(ctx *gin.Context) {
 	var req listUsersRequest
 	req.PageID = 1
