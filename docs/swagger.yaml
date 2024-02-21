@@ -203,7 +203,7 @@ definitions:
       user_id:
         type: string
     type: object
-host: localhost:8080
+host: a131d68128f1a4eb39fd292b16010ada-1179032583.ap-southeast-2.elb.amazonaws.com
 info:
   contact:
     email: aputradewantara@gmail.com

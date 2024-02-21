@@ -25,7 +25,7 @@ import (
 // @license.name Apache 2.0
 // @licence.url http://www.apache.org/licenses/LICENSE-2.0.html
 
-// @host localhost:8080
+// @host a131d68128f1a4eb39fd292b16010ada-1179032583.ap-southeast-2.elb.amazonaws.com
 func main() {
 	config, err := util.LoadConfig(".")
 	if err != nil {

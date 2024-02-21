@@ -971,7 +971,7 @@ const docTemplate = `{
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
-	Host:             "localhost:8080",
+	Host:             "a131d68128f1a4eb39fd292b16010ada-1179032583.ap-southeast-2.elb.amazonaws.com",
 	BasePath:         "",
 	Schemes:          []string{},
 	Title:            "Synapsis Backend Challenge",
