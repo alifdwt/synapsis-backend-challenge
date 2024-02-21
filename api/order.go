@@ -2,8 +2,10 @@ package api
 
 import (
 	"database/sql"
+	"encoding/json"
 	"errors"
 	"net/http"
+	"time"
 
 	db "github.com/alifdwt/synapsis-backend-challenge/db/sqlc"
 	"github.com/alifdwt/synapsis-backend-challenge/token"
@@ -15,6 +17,41 @@ type createOrderRequest struct {
 	PaymentMethod string `json:"payment_method" binding:"required,payment_method"`
 }
 
+type orderResponse struct {
+	ID            string         `json:"id"`
+	UserID        string         `json:"user_id"`
+	PaymentMethod string         `json:"payment_method" binding:"payment_method"`
+	TotalCost     int64          `json:"total_cost"`
+	OrderDate     time.Time      `json:"order_date"`
+	OrderItems    []db.OrderItem `json:"order_items"`
+}
+
+func newOrderResponse(order db.OrderWithOrderItem) orderResponse {
+	var orderItems []db.OrderItem
+	err := json.Unmarshal(order.OrderItems, &orderItems)
+	if err != nil {
+		return orderResponse{}
+	}
+	return orderResponse{
+		ID:            order.ID,
+		UserID:        order.UserID,
+		PaymentMethod: order.PaymentMethod,
+		TotalCost:     order.TotalCost,
+		OrderDate:     order.OrderDate,
+		OrderItems:    orderItems,
+	}
+}
+
+// createOrder godoc
+// @Summary      Create order
+// @Description  Create order from cart (Payment method must be [COD, BANK_TRANSFER, E_WALLET])
+// @Tags         order
+// @Accept       json
+// @Produce      json
+// @Param        order  body      createOrderRequest  true  "Create order"
+// @Success      200 {object} orderResponse
+// @Security	 BearerAuth
+// @Router       /orders [post]
 func (server *Server) createOrder(ctx *gin.Context) {
 	var req createOrderRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
@@ -82,9 +119,20 @@ func (server *Server) createOrder(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, order)
+	order2, _ := server.store.GetOrder(ctx, order.ID)
+
+	ctx.JSON(http.StatusOK, newOrderResponse(order2))
 }
 
+// listOrders godoc
+// @Summary      List orders
+// @Description  List orders from logged in user
+// @Tags         order
+// @Accept       json
+// @Produce      json
+// @Success      200 {array} orderResponse
+// @Security	 BearerAuth
+// @Router       /orders [get]
 func (server *Server) listOrders(ctx *gin.Context) {
 	authPayload := ctx.MustGet(authorizationPayloadKey).(*token.Payload)
 	orders, err := server.store.ListOrders(ctx, authPayload.Issuer)
@@ -92,5 +140,11 @@ func (server *Server) listOrders(ctx *gin.Context) {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
-	ctx.JSON(http.StatusOK, orders)
+
+	var orders2 []orderResponse
+	for i := 0; i < len(orders); i++ {
+		orders2 = append(orders2, newOrderResponse(orders[i]))
+	}
+
+	ctx.JSON(http.StatusOK, orders2)
 }

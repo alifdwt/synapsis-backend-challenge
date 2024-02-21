@@ -9,6 +9,23 @@ import (
 	"github.com/alifdwt/synapsis-backend-challenge/util"
 )
 
+// @title Synapsis Backend Challenge
+// @version 1.0
+// @description This is an API for Synapsis Backend Challenge, and also an assignment for Backend Engineer Position at Synapsis.
+// @termsOfService http://swagger.io/terms/
+
+// @contact.name Alif Dewantara
+// @contact.url http://github.com/alifdwt
+// @contact.email aputradewantara@gmail.com
+
+// @securityDefinitions.apikey BearerAuth
+// @in header
+// @name Authorization
+
+// @license.name Apache 2.0
+// @licence.url http://www.apache.org/licenses/LICENSE-2.0.html
+
+// @host localhost:8080
 func main() {
 	config, err := util.LoadConfig(".")
 	if err != nil {

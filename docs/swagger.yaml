@@ -1,0 +1,622 @@
+definitions:
+  api.cartWithCartItemsResponse:
+    properties:
+      cart_items:
+        items:
+          $ref: '#/definitions/db.CartItem'
+        type: array
+      created_at:
+        type: string
+      id:
+        type: string
+      user_id:
+        type: string
+    type: object
+  api.categoryResponse:
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+      products:
+        items:
+          $ref: '#/definitions/db.Product'
+        type: array
+    type: object
+  api.createCartRequest:
+    properties:
+      product_id:
+        type: string
+    type: object
+  api.createCategoryRequest:
+    properties:
+      name:
+        type: string
+    type: object
+  api.createOrderRequest:
+    properties:
+      payment_method:
+        type: string
+    required:
+    - payment_method
+    type: object
+  api.createProductRequest:
+    properties:
+      category_id:
+        type: string
+      description:
+        type: string
+      price:
+        type: integer
+      title:
+        type: string
+    required:
+    - category_id
+    - description
+    - price
+    - title
+    type: object
+  api.createUserRequest:
+    properties:
+      email:
+        type: string
+      full_name:
+        type: string
+      password:
+        minLength: 6
+        type: string
+      username:
+        type: string
+    required:
+    - email
+    - full_name
+    - password
+    - username
+    type: object
+  api.loginUserRequest:
+    properties:
+      password:
+        minLength: 6
+        type: string
+      username:
+        type: string
+    required:
+    - password
+    - username
+    type: object
+  api.loginUserResponse:
+    properties:
+      access_token:
+        type: string
+      user:
+        $ref: '#/definitions/api.userWithProductsResponse'
+    type: object
+  api.orderResponse:
+    properties:
+      id:
+        type: string
+      order_date:
+        type: string
+      order_items:
+        items:
+          $ref: '#/definitions/db.OrderItem'
+        type: array
+      payment_method:
+        type: string
+      total_cost:
+        type: integer
+      user_id:
+        type: string
+    type: object
+  api.productResponse:
+    properties:
+      category:
+        $ref: '#/definitions/db.Category'
+      created_at:
+        type: string
+      description:
+        type: string
+      id:
+        type: string
+      price:
+        type: integer
+      title:
+        type: string
+      updated_at:
+        type: string
+      user_id:
+        type: string
+    type: object
+  api.userResponse:
+    properties:
+      created_at:
+        type: string
+      email:
+        type: string
+      full_name:
+        type: string
+      username:
+        type: string
+    type: object
+  api.userWithProductsResponse:
+    properties:
+      created_at:
+        type: string
+      email:
+        type: string
+      full_name:
+        type: string
+      products:
+        items:
+          $ref: '#/definitions/db.Product'
+        type: array
+      username:
+        type: string
+    type: object
+  db.CartItem:
+    properties:
+      cart_id:
+        type: string
+      id:
+        type: string
+      product_id:
+        type: string
+      quantity:
+        type: integer
+    type: object
+  db.Category:
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+    type: object
+  db.OrderItem:
+    properties:
+      id:
+        type: string
+      order_id:
+        type: string
+      price_at_purchase:
+        type: integer
+      product_id:
+        type: string
+      quantity:
+        type: integer
+    type: object
+  db.Product:
+    properties:
+      category_id:
+        type: string
+      created_at:
+        type: string
+      description:
+        type: string
+      id:
+        type: string
+      price:
+        type: integer
+      title:
+        type: string
+      updated_at:
+        type: string
+      user_id:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact:
+    email: aputradewantara@gmail.com
+    name: Alif Dewantara
+    url: http://github.com/alifdwt
+  description: This is an API for Synapsis Backend Challenge, and also an assignment
+    for Backend Engineer Position at Synapsis.
+  license:
+    name: Apache 2.0
+  termsOfService: http://swagger.io/terms/
+  title: Synapsis Backend Challenge
+  version: "1.0"
+paths:
+  /cart:
+    delete:
+      consumes:
+      - application/json
+      description: Delete cart from logged in user
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.cartWithCartItemsResponse'
+      security:
+      - BearerAuth: []
+      summary: Delete cart
+      tags:
+      - cart
+    get:
+      consumes:
+      - application/json
+      description: Get cart from logged in user
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.cartWithCartItemsResponse'
+      security:
+      - BearerAuth: []
+      summary: Get cart
+      tags:
+      - cart
+    post:
+      consumes:
+      - application/json
+      description: Create cart to logged in user
+      parameters:
+      - description: Create cart request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/api.createCartRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.cartWithCartItemsResponse'
+      security:
+      - BearerAuth: []
+      summary: Create cart
+      tags:
+      - cart
+  /cart-items/{productId}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete cart item
+      parameters:
+      - description: Product ID
+        in: path
+        name: productId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.cartWithCartItemsResponse'
+      security:
+      - BearerAuth: []
+      summary: Delete cart item
+      tags:
+      - cart
+  /categories:
+    get:
+      consumes:
+      - application/json
+      description: List categories
+      parameters:
+      - in: query
+        minimum: 1
+        name: page_id
+        required: true
+        type: integer
+      - in: query
+        maximum: 10
+        minimum: 5
+        name: page_size
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/api.categoryResponse'
+            type: array
+      summary: List categories
+      tags:
+      - category
+    post:
+      consumes:
+      - application/json
+      description: Add a new category
+      parameters:
+      - description: Category
+        in: body
+        name: category
+        required: true
+        schema:
+          $ref: '#/definitions/api.createCategoryRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.categoryResponse'
+      security:
+      - BearerAuth: []
+      summary: Create new category
+      tags:
+      - category
+  /categories/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get category
+      parameters:
+      - description: Category ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.categoryResponse'
+      summary: Get category
+      tags:
+      - category
+  /orders:
+    get:
+      consumes:
+      - application/json
+      description: List orders from logged in user
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/api.orderResponse'
+            type: array
+      security:
+      - BearerAuth: []
+      summary: List orders
+      tags:
+      - order
+    post:
+      consumes:
+      - application/json
+      description: Create order from cart (Payment method must be [COD, BANK_TRANSFER,
+        E_WALLET])
+      parameters:
+      - description: Create order
+        in: body
+        name: order
+        required: true
+        schema:
+          $ref: '#/definitions/api.createOrderRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.orderResponse'
+      security:
+      - BearerAuth: []
+      summary: Create order
+      tags:
+      - order
+  /products:
+    get:
+      consumes:
+      - application/json
+      description: List products
+      parameters:
+      - description: Page ID
+        in: query
+        name: page_id
+        type: integer
+      - description: Page Size
+        in: query
+        name: page_size
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/api.productResponse'
+            type: array
+      summary: List products
+      tags:
+      - product
+    post:
+      consumes:
+      - application/json
+      description: Add a new product
+      parameters:
+      - description: Product
+        in: body
+        name: product
+        required: true
+        schema:
+          $ref: '#/definitions/api.createProductRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.productResponse'
+      security:
+      - BearerAuth: []
+      summary: Create new product
+      tags:
+      - product
+  /products/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete product
+      parameters:
+      - description: Product ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.productResponse'
+      security:
+      - BearerAuth: []
+      summary: Delete product
+      tags:
+      - product
+    get:
+      consumes:
+      - application/json
+      description: Get product
+      parameters:
+      - description: Product ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.productResponse'
+      summary: Get product
+      tags:
+      - product
+    put:
+      consumes:
+      - application/json
+      description: Update product
+      parameters:
+      - description: Product ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.productResponse'
+      security:
+      - BearerAuth: []
+      summary: Update product
+      tags:
+      - product
+  /users:
+    get:
+      consumes:
+      - application/json
+      description: List users
+      parameters:
+      - in: query
+        name: page_id
+        type: integer
+      - in: query
+        name: page_size
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/api.userWithProductsResponse'
+            type: array
+      summary: List users
+      tags:
+      - user
+    post:
+      consumes:
+      - application/json
+      description: Add a new user
+      parameters:
+      - description: User
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/api.createUserRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.userResponse'
+      summary: Create new user
+      tags:
+      - user
+  /users/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get user
+      parameters:
+      - description: User
+        in: path
+        name: user
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.userWithProductsResponse'
+      summary: Get user
+      tags:
+      - user
+  /users/login:
+    post:
+      consumes:
+      - application/json
+      description: Login user
+      parameters:
+      - description: User
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/api.loginUserRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.loginUserResponse'
+      summary: Login user
+      tags:
+      - user
+securityDefinitions:
+  BearerAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

@@ -14,6 +14,16 @@ type deleteCartItemRequest struct {
 	ProductID string `uri:"productId" binding:"required"`
 }
 
+// deleteCartItem godoc
+// @Summary      Delete cart item
+// @Description  Delete cart item
+// @Tags         cart
+// @Accept       json
+// @Produce      json
+// @Param        productId path string true "Product ID"
+// @Success      200 {object} cartWithCartItemsResponse
+// @Security	 BearerAuth
+// @Router       /cart-items/{productId} [delete]
 func (server *Server) deleteCartItem(ctx *gin.Context) {
 	var req deleteCartItemRequest
 	if err := ctx.ShouldBindUri(&req); err != nil {

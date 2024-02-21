@@ -2,11 +2,14 @@ package api
 
 import (
 	db "github.com/alifdwt/synapsis-backend-challenge/db/sqlc"
+	_ "github.com/alifdwt/synapsis-backend-challenge/docs"
 	"github.com/alifdwt/synapsis-backend-challenge/token"
 	"github.com/alifdwt/synapsis-backend-challenge/util"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/go-playground/validator/v10"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 type Server struct {
@@ -39,6 +42,8 @@ func NewServer(config util.Config, store db.Store) (*Server, error) {
 func (server *Server) setupRouter() {
 	router := gin.Default()
 
+	router.GET("/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+
 	router.POST("/users", server.createUser)
 	router.POST("/users/login", server.loginUser)
 	router.GET("/products/:id", server.getProduct)
@@ -56,7 +61,7 @@ func (server *Server) setupRouter() {
 	authRoutes.GET("/cart", server.getCart)
 	authRoutes.POST("/cart", server.createCart)
 	authRoutes.DELETE("/cart", server.deleteCart)
-	authRoutes.POST("/order", server.createOrder)
+	authRoutes.POST("/orders", server.createOrder)
 	authRoutes.GET("/orders", server.listOrders)
 	authRoutes.DELETE("/cart-items/:productId", server.deleteCartItem)
 

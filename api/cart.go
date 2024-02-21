@@ -40,6 +40,16 @@ func newCartWithCartItemsResponse(cart db.ShoppingCartWithCartItem) cartWithCart
 	}
 }
 
+// createCart godoc
+// @Summary      Create cart
+// @Description  Create cart to logged in user
+// @Tags         cart
+// @Accept       json
+// @Produce      json
+// @Param        request body createCartRequest true "Create cart request"
+// @Success      200 {object} cartWithCartItemsResponse
+// @Security	 BearerAuth
+// @Router       /cart [post]
 func (server *Server) createCart(ctx *gin.Context) {
 	var req createCartRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
@@ -112,8 +122,16 @@ func (server *Server) createCart(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, shoppingCart2)
 }
 
+// getCart godoc
+// @Summary      Get cart
+// @Description  Get cart from logged in user
+// @Tags         cart
+// @Accept       json
+// @Produce      json
+// @Success      200 {object} cartWithCartItemsResponse
+// @Security	 BearerAuth
+// @Router       /cart [get]
 func (server *Server) getCart(ctx *gin.Context) {
-
 	authPayload := ctx.MustGet(authorizationPayloadKey).(*token.Payload)
 	cart, err := server.store.GetShoppingCartWithCartItems(ctx, authPayload.Issuer)
 	if err != nil {
@@ -128,8 +146,16 @@ func (server *Server) getCart(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, cart)
 }
 
+// deleteCart godoc
+// @Summary      Delete cart
+// @Description  Delete cart from logged in user
+// @Tags         cart
+// @Accept       json
+// @Produce      json
+// @Success      200 {object} cartWithCartItemsResponse
+// @Security	 BearerAuth
+// @Router       /cart [delete]
 func (server *Server) deleteCart(ctx *gin.Context) {
-
 	authPayload := ctx.MustGet(authorizationPayloadKey).(*token.Payload)
 	cart, err := server.store.GetShoppingCartWithCartItems(ctx, authPayload.Issuer)
 	if err != nil {
@@ -141,7 +167,7 @@ func (server *Server) deleteCart(ctx *gin.Context) {
 		return
 	}
 
-	err = server.store.DeleteShoppingCart(ctx, cart.ID)
+	err = server.store.DeleteShoppingCart(ctx, cart.UserID)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
