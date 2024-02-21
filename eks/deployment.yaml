@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: synapsis-challenge-api-deployment
+  labels:
+    app: synapsis-challenge-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: synapsis-challenge-api
+  template:
+    metadata:
+      labels:
+        app: synapsis-challenge-api
+    spec:
+      containers:
+        - name: synapsis-challenge-api
+          image: 471112671924.dkr.ecr.ap-southeast-2.amazonaws.com/synapsis-backend-challenge:7a8ca940fe406c996f80ad7a29b92631ad5c9edd
+          ports:
+            - containerPort: 8080
